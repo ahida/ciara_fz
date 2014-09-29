@@ -143,8 +143,29 @@ tipo_persona()
 class ejecucion_fisica(osv.osv):
     _name = 'ejecucion_fisica'
     _rec_name = 'nombre_objetivo'
-    
-    def retorna_id_fundos(self, cr, uid, ids, context=None):
+    def retorna_id_tecnicos(self, cr, uid, context=None):
+        res=[]
+        personas=self.pool.get('usuario')
+        personas_id=personas.search(cr,uid,[])
+        personas_mapa=personas.browse(cr, uid, personas_id)
+        res_user=self.pool.get('res.users')
+        for d in personas_mapa:
+            for grupo in d.users_id.groups_id:
+                if grupo.name=='TECNICOS':
+                    if uid!=d.users_id.id:
+                        res.append(d.id)
+        return res
+        
+    def retorna_id_fundo(self, cr, uid, context=None):
+        rest=[]
+        personas=self.pool.get('usuario')
+        personas_id=personas.search(cr,uid,[('users_id','=',uid)])
+        personas_mapa=personas.browse(cr, uid, personas_id)
+        for d in personas_mapa:
+                for f in d.fundo_ids:
+                    rest.append((f.id,f.codigo))
+        return rest
+    def retorna_id_miembro_referencial(self, cr, uid, ids, context=None):
         rest = []
         personas=self.pool.get('usuario')
         sesionado=personas.search(cr,uid,[('users_id','=',uid)])
@@ -160,16 +181,17 @@ class ejecucion_fisica(osv.osv):
         arr = []
         qwer=0
         for o in self.browse(cr, uid, ids, context=context):
-            for w in o.personas_atendidas_ids:
+            for w in o.personas_atendida_ids:
                 arr.append(w.tipo_persona_id.nombre)
                 for i in arr:
                     if arr.count(w.tipo_persona_id.nombre)!=1:
-					    qwer=0
-					    raise osv.except_osv(('Error !'), ('haz seleccionado dos veces %s' % (w.tipo_persona_id.nombre)))
+                        qwer=0
+                        raise osv.except_osv(('Error !'), ('haz seleccionado dos veces %s' % (w.tipo_persona_id.nombre)))
                 qwer+=int(w.cantidad)                        
         res[o.id] = qwer
         qwer=0
         return res
+    
 
 
     _columns = {
@@ -184,7 +206,7 @@ class ejecucion_fisica(osv.osv):
         'fecha_planificacion': fields.date('Fecha de planificacion', size=10, required='True', help=' Se refleja la fecha de planificación de la actividad de acompañamiento o capacitación a ejecutar. '),
         'fecha_ejecucion': fields.date('Fecha de ejecucion', size=10, required='True', help='se refleja la fecha la cual se ejecutara la actividad de acompañamiento o capacitación '),
         'resultado': fields.text('Resultado', required='True', help=' es la descripción del impacto positivo o negativo obtenido de la actividad acompañamiento o capacitación. Cabe a destacar que se debe realizar con un enfoque cualitativo. '),
-        'fundo_id': fields.many2one('fundo', 'Fundo', required='True', help=' Se seleccionara el nombre del Fundo Zamorano al cual se le cargara la actividad de capacitación o de acompañamiento '),
+        'fundo_id': fields.selection(retorna_id_fundo, 'Fundo Zamorano', required='True',help=' Se seleccionara el nombre del Fundo Zamorano al cual se le cargara la actividad de capacitación o de acompañamiento '),
         'organizacion_id': fields.many2one('organizacion', 'Organizacion', required='True', help=' Organización  donde se ejecuto la actividad de Capacitación o Acompañamiento.'),
         'acciones_especificas_id': fields.many2one('acciones_especificas', 'Acciones especifica', required='True', help=' Se refleja la acción especifica ejecutada (Capacitación o Acompañamiento) '),
         'personas_atendida_ids': fields.one2many('personas_atendidas', 'ejecucion_fisica_id', 'Personas atendidas', required='True', help=' relacion que existe entre personas atendidas y ejecucion fisica '),
@@ -192,15 +214,16 @@ class ejecucion_fisica(osv.osv):
         'materiales_apoyo_ids': fields.one2many('materiales_apoyo', 'ejecucion_fisica_id', 'Materiales de apoyo', help=' relacion que existe entre materiales de apoyo y la ejecucion fisica '),
         'componentes_proyecto_ids': fields.one2many('componentes_proyecto', 'ejecucion_fisica_id', 'Componentes del proyecto' , help=' Relacion entre componentes proyecto y la ejecucion fisica '),
         'ejes_transversales_ids': fields.one2many('ejes_transversales', 'ejecucion_fisica_id', 'Ejes transversales', help=' Relacion de los Ejes transversales con la ejecucion fisica '),
-        'familias_atendidas_ids': fields.many2many('miembro_referencial', 'ejecucion', 'miembro_referencial_id', 'ejecucion_fisica_id', 'Personas Atendidas', help='ayuda'),
+        'familias_atendidas_ids': fields.many2many('miembro_referencial', 'ejecucion', 'ejecucion_fisica_id', 'miembro_referencial_id', 'Personas Atendidas', help='ayuda'),
         #~ 'pere': fields.function(retorna_id_fundos, method=True, type='many2many', relation='grupo_familiar', string='BOM Products'),
-        'personas_atendidas_ids': fields.many2many('grupo_familiar', 'personas', 'grupo_familiar_id', 'ejecucion_fisica_id', 'Familias Atendidas'),
-        'tecnicos_ids': fields.one2many('tecnicos', 'ejecucion_fisica_id', 'Tecnicos', help=' Relacion de los tecnicos con la ejecucion fisica '),
+        'personas_atendidas_ids': fields.many2many('grupo_familiar', 'personas', 'ejecucion_fisica_id', 'grupo_familiar_id', 'Familias Atendidas' ),
+        'tecnicos_ayuda_domain_ids': fields.many2many('usuario', 'tecnicos_ayuda_domain_usuarios', 'ejecucion_fisica_id', 'usuario_id', 'Tecnicos Relacionados que nos ayudara a cargar datos en tecnicos_ids ' ),
+        'tecnicos_ids': fields.many2many('usuario', 'tecnicos_usuarios', 'ejecucion_fisica_id', 'usuario_id', 'Tecnicos Relacionados' ),
         'fecha_actual': fields.datetime('Fecha del Sistema', help='cuidado '),
     }
     _defaults={
-             #~ 'familias_atendidas_ids':lambda s, cr, uid, c: s.retorna_id_fundos(s,cr,uid,s.rest,c) 
-             'familias_atendidas_ids':retorna_id_fundos
+             'familias_atendidas_ids':retorna_id_miembro_referencial,
+             'tecnicos_ayuda_domain_ids':retorna_id_tecnicos,
             }
     
     def valida_fecha_eje_plan(self, cr, uid, ids, context=None):

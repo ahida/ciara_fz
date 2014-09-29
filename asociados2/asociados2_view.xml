@@ -59,6 +59,12 @@
         <field name="res_model">miembro_referencial</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_miembro_referencial_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Acá se registran los Integrantes a quienes hacen referencia las Familias Asociadas 
+            </p>
+        </field>
     </record>
 
     
@@ -196,6 +202,12 @@
         <field name="res_model">genero</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_genero_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Acá se registra el Tipo de Sexo del Integrante 
+            </p>
+        </field>
     </record>
     
         
@@ -226,6 +238,12 @@
         <field name="res_model">estado_civil</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_estado_civil_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Acá se registra el Estado Civil del Integrante 
+            </p>
+        </field>
     </record>
   
 
@@ -257,6 +275,12 @@
         <field name="res_model">nivel_educativo</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_nivel_educativo_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Acá se registra el Nivel Educativo 
+            </p>
+        </field>
     </record>
     
 
@@ -288,6 +312,12 @@
         <field name="res_model">partido_politico</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_partido_politico_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Acá se registra los Partidos Politicos de las Familias Asociadas
+            </p>
+        </field>
     </record>
     
 
@@ -319,6 +349,12 @@
         <field name="res_model">intrumento_agrario</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_intrumento_agrario_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Acá se registra los Instrumentos Agrarios  de las Familias  Asociados
+            </p>
+        </field>
     </record>
 
 
@@ -349,6 +385,12 @@
         <field name="res_model">tipo_telefono</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_tipo_telefono_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Acá se registra los tipos de Telefonos de las Familias Asociadas
+            </p>
+        </field>
     </record>
     
 
@@ -410,6 +452,12 @@
         <field name="res_model">mision</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_mision_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Acá se registra las diferentes Misiones a las que pertene las Familias Asociadas
+            </p>
+        </field>
     </record>
     
 
